@@ -5,6 +5,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+TSDR2JSON: Windows command-line program to obtain trademark information from the USPTO's TSDR system and present it in an easy-to-parse JSON format
+
+Command is used as follows:
+
+  TSDRJSON s nnnnnnnn : provide information on trademark application serial no. nnnnnnnn (8-digit number) in JSON format
+
+or
+
+  TSDRJSON r nnnnnnn : provide information on trademark registration no. nnnnnnn (7-digit number) in JSON format
+
+For example, "TSDRJSON r 2564831" will generate a JSON-formatted dump of information on registration no. 2564831
+
+Copyright 2014-2018 Terry Carroll
+carroll@tjc.com
+
+License information:
+This program is licensed under Apache License, version 2.0 (January 2004); see http://www.apache.org/licenses/LICENSE-2.0
+SPX-License-Identifier: Apache-2.0
+
+ */
+
 namespace TSDR2JSON
 {
     class TSDR2JSON
