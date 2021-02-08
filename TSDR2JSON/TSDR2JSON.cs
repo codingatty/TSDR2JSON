@@ -61,6 +61,12 @@ namespace TSDR2JSON
             requested_type = args[0];
             requested_number = args[1];
 
+            // temporary, to confirm using new library version
+            var metainfo = Plumage.TSDRReq.GetMetainfo();
+            Console.WriteLine(metainfo["MetaInfoLibraryVersion"]);
+            System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
+            //
+
             Plumage.TSDRReq t = new Plumage.TSDRReq();
             t.getTSDRInfo(requested_number, requested_type);
             var validity_dict = new Dictionary<string, string>()
