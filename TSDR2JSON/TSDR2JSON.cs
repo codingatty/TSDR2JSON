@@ -39,6 +39,9 @@ namespace TSDR2JSON
             string arguments_passed = "";
             string exception_msg;
 
+            // TEMP
+            string APIKEY = ""; // placeholder for API Key
+
             for (int i = 0; i < args.Length; i++)
             {
                 arguments_passed = arguments_passed + args[i] + " ";
@@ -68,6 +71,8 @@ namespace TSDR2JSON
             //
 
             Plumage.TSDRReq t = new Plumage.TSDRReq();
+            t.setAPIKey(APIKEY);
+
             t.getTSDRInfo(requested_number, requested_type);
             var validity_dict = new Dictionary<string, string>()
             {
