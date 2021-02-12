@@ -141,7 +141,6 @@ namespace TSDR2JSON
                 return;
             }
 
-
             if (shouldShowHelp)
             {
                 ShowHelp(options);
@@ -151,6 +150,12 @@ namespace TSDR2JSON
             if (shouldShowVersion)
             {
                 ShowVersion();
+                return;
+            }
+
+            if (extra.Count > 0)
+            {
+                ComplainExtraOperand(extra[0]);
                 return;
             }
 
@@ -273,12 +278,22 @@ namespace TSDR2JSON
 
             void ShowVersion()
             {
-                Console.WriteLine($"{programName} version {versionNumber}");
+                string tsdr2jsonInfo = $"{programName} version {versionNumber}";
+                var metainfo = Plumage.TSDRReq.GetMetainfo();
+                string plumageInfo = $"{metainfo["MetaInfoLibraryName"]} {metainfo["MetaInfoLibraryVersion"]}";
+                Console.WriteLine($"{tsdr2jsonInfo} (Plumage library: {plumageInfo})");
             }
 
             void SuggestHelp()
             {
-                Console.WriteLine($"Try '{programName}  --help' for more information.");
+                Console.WriteLine($"Try '{programName} --help' for more information.");
+            }
+            
+            void ComplainExtraOperand(string op)
+            {
+                Console.WriteLine($"Error: unrecognized operand {op}");
+                SuggestHelp();
+
             }
 
             Boolean validateRequestNumber(string requested_type, string requested_number)
