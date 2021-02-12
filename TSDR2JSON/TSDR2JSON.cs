@@ -9,17 +9,29 @@ using System.Threading.Tasks;
 /*
 TSDR2JSON: Windows command-line program to obtain trademark information from the USPTO's TSDR system and present it in an easy-to-parse JSON format
 
-Command is used as follows:
+Example use:
 
-  TSDRJSON s nnnnnnnn : provide information on trademark application serial no. nnnnnnnn (8-digit number) in JSON format
-
+    TSDR2JSON -k="32CharacterAPIKeyYouGotFromUSPTO" -r=1234567
 or
+    TSDR2JSON --key="32CharacterAPIKeyYouGotFromUSPTO" --registration=1234567
 
-  TSDRJSON r nnnnnnn : provide information on trademark registration no. nnnnnnn (7-digit number) in JSON format
+Get TSDR information on USPTO trademark registration no. 1,234,567 using the API key specified.
 
-For example, "TSDRJSON r 2564831" will generate a JSON-formatted dump of information on registration no. 2564831
+An API key can be obtained for free from the PTO; see https://developer.uspto.gov/api-catalog/tsdr-data-api
 
-Copyright 2014-2018 Terry Carroll
+Allowable options:
+  -r, --registration=VALUE   trademark registration number to report
+  -s, --serial=VALUE         trademark application serial number to report
+  -k, --key=VALUE            USPTO-provided API key
+  -c, --config[=VALUE]       Use a configuration file to specify the API key
+  -o, --outfile[=VALUE]      Write the JSON information to a text file instead of displaying it;
+                             The default filename is tsdr2json-output.json
+  -h, --help                 show help infoemation and exit
+  -v, --version              show version info and exit
+
+For more infomartion, see https://github.com/codingatty/TSDR2JSON
+
+Copyright 2019-2021 Terry Carroll
 carroll@tjc.com
 
 License information:
