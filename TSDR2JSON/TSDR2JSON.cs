@@ -232,7 +232,7 @@ namespace TSDR2JSON
                     if (validity_dict["ErrorMessage"] == null) validity_dict["ErrorMessage"] = "";
                     foreach (string key in t.TSDRData.TSDRSingle.Keys)
                     {
-                        if (!key.StartsWith("Diag"))
+                        if (!key.StartsWith("MetaInfo"))
                         {
                             output_TSDRSingle[key] = t.TSDRData.TSDRSingle[key];
                         };
