@@ -1,0 +1,5 @@
+{
+"Comment": "Copy sample-test-config.json to test-config.json and update with your own API key from the PTO; see https://developer.uspto.gov/faq/tsdr-api-bulk-download for details",
+"TSDRAPIKey": "32CharacterAPIKeyYouGotFromUSPTO",
+"TSDRAPIKeyExpirationDate": "2021-12-01"
+}
