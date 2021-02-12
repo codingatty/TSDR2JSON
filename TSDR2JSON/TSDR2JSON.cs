@@ -42,9 +42,10 @@ namespace TSDR2JSON
             var bailOutEarly = false;
             var shouldShowHelp = false;
 
-            string programName = "TSDR2JSON";
+            string programName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
 
-            List<string> extra; 
+            List<string> extra;
+         
 
             // TEMP
             string APIKEY = ""; // placeholder for API Key
