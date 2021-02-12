@@ -149,7 +149,6 @@ namespace TSDR2JSON
                 Console.WriteLine(e.Message);
                 SuggestHelp();
                 bailOutEarly = true;
-                Console.ReadLine();
                 return;
             }
 
@@ -171,13 +170,6 @@ namespace TSDR2JSON
                 return;
             }
 
-            Console.WriteLine($"(outer)config file: {configurationFilename}");
-
-            Console.WriteLine($"configurationFilename is null: {configurationFilename == null}");
-            Console.WriteLine($"configurationFilename is blank: {configurationFilename == ""}");
-            Console.WriteLine($"useConfigFile:  {useConfigFile}");
-
-
             if (!registrationNumberSet && !serialNumberSet)
             {
                 Console.WriteLine("No PTO registration or application serial no. provided.");
@@ -188,22 +180,9 @@ namespace TSDR2JSON
             if (!bailOutEarly)
             {
 
-
-                Console.WriteLine("Here's where I do stuff, if there is stuff to be done.");
-                // temporary, to confirm using new library version
-                Console.WriteLine($"config file: {configurationFilename}");
-
-                var metainfo = Plumage.TSDRReq.GetMetainfo();
-                Console.WriteLine(metainfo["MetaInfoLibraryVersion"]);
-                System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
-                //
-
                 if (useConfigFile)
                 {
                     string fileToUse = configurationFilename ?? $"{programName.ToLower()}-config.json";
-                    Console.WriteLine($"fileToUse: {fileToUse}");
-                    Console.WriteLine($"fileToUse is null: {fileToUse == null}");
-                    Console.WriteLine($"fileToUse is blank: {fileToUse == ""}");
                     string JSONConfigInfo = File.ReadAllText(fileToUse);
                     Dictionary<string, string> configDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(JSONConfigInfo);
                     if (configDict.ContainsKey("TSDRAPIKey")) { APIKeyFromConfig = configDict["TSDRAPIKey"]; }
@@ -212,9 +191,6 @@ namespace TSDR2JSON
                 if (useOutputFile)
                 {
                     outputFilename = outputFilenameFromCommand ?? $"{programName.ToLower()}-out.json";
-                    Console.WriteLine($"fileToUse: {outputFilename}");
-                    Console.WriteLine($"fileToUse is null: {outputFilename == null}");
-                    Console.WriteLine($"fileToUse is blank: {outputFilename == ""}");
                 }
 
 
@@ -273,8 +249,6 @@ namespace TSDR2JSON
                 }
             }
 
-            Console.WriteLine("finishing");
-            Console.ReadLine();
             return;
 
             void ShowHelp(Mono.Options.OptionSet p)
