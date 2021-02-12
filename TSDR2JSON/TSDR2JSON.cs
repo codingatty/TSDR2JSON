@@ -48,14 +48,16 @@ namespace TSDR2JSON
             string lookupType = null;
             string lookupNumber = null;
 
-            List<string> extra; 
+            var bailOutEarly = false;
+
+            List<string> extra;  // 
 
             // TEMP
             string APIKEY = ""; // placeholder for API Key
 
             var options = new Mono.Options.OptionSet {
 
-                 { "r|registration=", "trademark registration number to report", r =>  {
+                 { "r|registration=", "trademark registration number to report", r => {
                      if (registrationNumberSet)
                      {
                          throw new Mono.Options.OptionException("Specify only one registration number", "-r/--registration");
@@ -67,6 +69,13 @@ namespace TSDR2JSON
                      registrationNumberSet = true;
                      lookupType = "r";
                      lookupNumber  = r;
+
+                     var lookupNumberisvalid = validateRequestNumber(lookupType, lookupNumber);
+                     if (!lookupNumberisvalid)
+                     {
+                          throw new Mono.Options.OptionException($"Invalid registration number {lookupNumber}; must be exactly 7 digits", "-r/--registration");
+                     }
+
                      }
                 },
                  { "s|serial=", "trademark application serial number to report",  s => {
@@ -81,6 +90,13 @@ namespace TSDR2JSON
                      serialNumberSet = true;
                      lookupType = "s";
                      lookupNumber = s;
+                     
+                     var lookupNumberisvalid = validateRequestNumber(lookupType, lookupNumber);
+                     if (!lookupNumberisvalid)
+                     {
+                          throw new Mono.Options.OptionException($"Invalid application serial number {lookupNumber}; must be exactly 8 digits", "-s/--serial");
+                     }
+
                      }
                  },
             };
@@ -96,11 +112,25 @@ namespace TSDR2JSON
                 Console.Write($"Options error ({e.OptionName}): ");
                 Console.WriteLine(e.Message);
                 // SuggestHelp();
+                bailOutEarly = true;
+                Console.ReadLine();
                 return;
             }
 
 
             Console.WriteLine($"type : {lookupType}, number:  {lookupNumber}");
+
+            if (!bailOutEarly)
+            {
+                Console.WriteLine("Here's where I do stuff, if there is stuff to be done.");
+                // temporary, to confirm using new library version
+                var metainfo = Plumage.TSDRReq.GetMetainfo();
+                Console.WriteLine(metainfo["MetaInfoLibraryVersion"]);
+                System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
+                //
+
+            }
+
             Console.WriteLine("finishing");
             Console.ReadLine();
             return;
@@ -128,12 +158,7 @@ namespace TSDR2JSON
             requested_type = args[0];
             requested_number = args[1];
 
-            // temporary, to confirm using new library version
-            var metainfo = Plumage.TSDRReq.GetMetainfo();
-            Console.WriteLine(metainfo["MetaInfoLibraryVersion"]);
-            System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
-            //
-
+           
             Plumage.TSDRReq t = new Plumage.TSDRReq();
             t.setAPIKey(APIKEY);
 
