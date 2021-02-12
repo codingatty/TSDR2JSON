@@ -10,6 +10,12 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# don't track config files with USPTO API key; don't want to push to public repository on Github
+tsdr2json-config.*
+tsdr2json-config.*
+other-config.json
+
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
