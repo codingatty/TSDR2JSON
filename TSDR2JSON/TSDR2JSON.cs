@@ -136,28 +136,10 @@ namespace TSDR2JSON
             return;
 
 
-            for (int i = 0; i < args.Length; i++)
-            {
-                arguments_passed = arguments_passed + args[i] + " ";
-            }
-            if (arguments_passed.Length > 0) {
-                arguments_passed = arguments_passed.Substring(0, arguments_passed.Length - 1);
-            }
-            parms_valid = validateParameters(args);
-            if (!parms_valid)
-            {
-                string exception_msg_template =
-                    "Error; exactly two arguments are required. Either:\n" +
-                    "   's' followed by eight-digit serial no. for application; or\n" +
-                    "   'r' followed by seven-digit registration no.\n" +
-                    "Example: TSDR2JSON r 1234567\n" +
-                    "The arguments provided were: \"{0}\"";
-                exception_msg = String.Format(exception_msg_template, arguments_passed);
-                throw new ArgumentException(exception_msg);
-            }
             requested_type = args[0];
             requested_number = args[1];
 
+ 
            
             Plumage.TSDRReq t = new Plumage.TSDRReq();
             t.setAPIKey(APIKEY);
@@ -199,48 +181,6 @@ namespace TSDR2JSON
             Console.WriteLine(json);
         }
 
-        static Boolean validateParameters(string[] args)
-        {
-            Boolean valid;
-            string requested_type;
-            string requested_number;
-
-            valid = validateNumberOfParameters(args);
-            if (valid){
-                requested_type = args[0];
-                valid = validateRequestType(requested_type);
-            }
-            if (valid)
-            {
-                requested_type = args[0];
-                requested_number = args[1];
-                valid = validateRequestNumber(requested_type, requested_number);
-            }
-            return valid;
-        }
-
-        static Boolean validateNumberOfParameters(string[] args)
-        {
-            Boolean valid = true;
-            if (args.Length != 2)
-            {
-                valid = false;
-            }
-            return valid;
-        }
-
-        static Boolean validateRequestType(string requested_type)
-        {
-            Boolean valid = true;
-            List<string> valid_types = new List<string>();
-            valid_types.Add("s");
-            valid_types.Add("r");
-            if (!valid_types.Contains(requested_type))
-                {
-                valid = false;
-                }
-            return valid;
-        }
         static Boolean validateRequestNumber(string requested_type, string requested_number)
         {
             Boolean valid = true;
