@@ -34,15 +34,6 @@ namespace TSDR2JSON
         static void Main(string[] args)
         {
             
-            // old vars
-            Boolean parms_valid;
-            string requested_type;
-            string requested_number;
-            string arguments_passed = "";
-            string exception_msg;
-
-            // new vars
-
             Boolean registrationNumberSet = false;
             Boolean serialNumberSet = false;
             string lookupType = null;
@@ -129,56 +120,55 @@ namespace TSDR2JSON
                 System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
                 //
 
-            }
 
-            Console.WriteLine("finishing");
-            Console.ReadLine();
-            return;
+                Plumage.TSDRReq t = new Plumage.TSDRReq();
+                t.setAPIKey(APIKEY);
 
-
-            requested_type = args[0];
-            requested_number = args[1];
-
- 
-           
-            Plumage.TSDRReq t = new Plumage.TSDRReq();
-            t.setAPIKey(APIKEY);
-
-            t.getTSDRInfo(requested_number, requested_type);
-            var validity_dict = new Dictionary<string, string>()
+                t.getTSDRInfo(lookupNumber, lookupType);
+                var validity_dict = new Dictionary<string, string>()
             {
                 { "Success", t.TSDRData.TSDRMapIsValid.ToString() },
                 { "ErrorCode", t.ErrorCode },
                 { "ErrorMessage", t.ErrorMessage }
             };
 
-            var output_TSDRSingle = new Dictionary<string, string>();
-            var output_TSDRMulti = new Dictionary<string, List<Dictionary<string,string>>>();
+                var output_TSDRSingle = new Dictionary<string, string>();
+                var output_TSDRMulti = new Dictionary<string, List<Dictionary<string, string>>>();
 
-            // trim out the "Diagnostic" stuff & use null strings instead of null-value for non-existent error messages
-            if (t.TSDRData.TSDRMapIsValid)
-            {
-                if (validity_dict["ErrorCode"] == null)  validity_dict["ErrorCode"] = "";
-                if (validity_dict["ErrorMessage"] == null)  validity_dict["ErrorMessage"] = "";
-                foreach (string key in t.TSDRData.TSDRSingle.Keys)
+                // trim out the "Diagnostic" stuff & use null strings instead of null-value for non-existent error messages
+                if (t.TSDRData.TSDRMapIsValid)
                 {
-                    if (!key.StartsWith("Diag"))
+                    if (validity_dict["ErrorCode"] == null) validity_dict["ErrorCode"] = "";
+                    if (validity_dict["ErrorMessage"] == null) validity_dict["ErrorMessage"] = "";
+                    foreach (string key in t.TSDRData.TSDRSingle.Keys)
                     {
-                        output_TSDRSingle[key] = t.TSDRData.TSDRSingle[key];
-                    };
+                        if (!key.StartsWith("Diag"))
+                        {
+                            output_TSDRSingle[key] = t.TSDRData.TSDRSingle[key];
+                        };
+                    }
+                    output_TSDRMulti = t.TSDRData.TSDRMulti;
                 }
-                output_TSDRMulti = t.TSDRData.TSDRMulti;
-            }
 
-            var output_dict = new Dictionary<string, Object>()
+                var output_dict = new Dictionary<string, Object>()
             {
                 { "SuccessInfo", validity_dict },
                 { "TSDRSingle", output_TSDRSingle },
                 { "TSDRMulti", output_TSDRMulti }
             };
 
-            string json = JsonConvert.SerializeObject(output_dict, Formatting.Indented);
-            Console.WriteLine(json);
+                string json = JsonConvert.SerializeObject(output_dict, Formatting.Indented);
+                Console.WriteLine(json);
+
+
+            }
+
+            Console.WriteLine("finishing");
+            Console.ReadLine();
+            return;
+
+           
+            
         }
 
         static Boolean validateRequestNumber(string requested_type, string requested_number)
