@@ -41,11 +41,12 @@ namespace TSDR2JSON
 
             var bailOutEarly = false;
             var shouldShowHelp = false;
+            var shouldShowVersion = false;
 
             string programName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+            string versionNumber = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
             List<string> extra;
-         
 
             // TEMP
             string APIKEY = ""; // placeholder for API Key
@@ -99,6 +100,8 @@ namespace TSDR2JSON
 
                  { "h|help", "show this message and exit", h => shouldShowHelp = h != null },
 
+                 { "v|version", "show version info and exit", v => shouldShowVersion = v != null },
+
             };
 
             try
@@ -122,11 +125,16 @@ namespace TSDR2JSON
             }
 
 
-            Console.WriteLine($"type : {lookupType}, number:  {lookupNumber}");
-
             if (shouldShowHelp)
             {
                 ShowHelp(options);
+                return;
+            }
+
+            if (shouldShowVersion)
+            {
+                ShowVersion();
+                return;
             }
 
             if (!bailOutEarly)
@@ -193,6 +201,10 @@ namespace TSDR2JSON
                 p.WriteOptionDescriptions(Console.Out);
             }
 
+            void ShowVersion()
+            {
+                Console.WriteLine($"{programName} version {versionNumber}");
+            }
         }
 
         static Boolean validateRequestNumber(string requested_type, string requested_number)
