@@ -53,7 +53,7 @@ namespace TSDR2JSON
 
             var options = new Mono.Options.OptionSet {
 
-                 { "r|registration=", "trademark registration number to report", r => {
+                { "r|registration=", "trademark registration number to report", r => {
                      if (registrationNumberSet)
                      {
                          throw new Mono.Options.OptionException("Specify only one registration number", "-r/--registration");
@@ -108,17 +108,13 @@ namespace TSDR2JSON
             {
                 // parse the command line
                 extra = options.Parse(args);
-                if (!registrationNumberSet && !serialNumberSet)
-                {
-                    bailOutEarly = true;
-                }
             }
             catch (Mono.Options.OptionException e)
             {
                 // output some error message
                 Console.Write($"Options error ({e.OptionName}): ");
                 Console.WriteLine(e.Message);
-                // SuggestHelp();
+                SuggestHelp();
                 bailOutEarly = true;
                 Console.ReadLine();
                 return;
@@ -136,6 +132,14 @@ namespace TSDR2JSON
                 ShowVersion();
                 return;
             }
+
+            if (!registrationNumberSet && !serialNumberSet)
+            {
+                Console.WriteLine("No PTO registration or application serial no. provided.");
+                SuggestHelp();
+                return;
+            }
+
 
             if (!bailOutEarly)
             {
@@ -199,31 +203,37 @@ namespace TSDR2JSON
                 Console.WriteLine();
                 Console.WriteLine("Options:");
                 p.WriteOptionDescriptions(Console.Out);
+                Console.WriteLine();
+                Console.WriteLine("For further information, see https://github.com/codingatty/TSDR2JSON");
             }
 
             void ShowVersion()
             {
                 Console.WriteLine($"{programName} version {versionNumber}");
             }
-        }
 
-        static Boolean validateRequestNumber(string requested_type, string requested_number)
-        {
-            Boolean valid = true;
-            if (requested_type == "s" && requested_number.Length !=8){
-                valid = false;
-            }
-            if (requested_type == "r" && requested_number.Length != 7)
+            void SuggestHelp()
             {
-                valid = false;
+                Console.WriteLine($"Try '{programName}  --help' for more information.");
             }
-            if (!requested_number.All(Char.IsDigit))
-            {
-                valid = false;
-            }
-            return valid;
-        }
 
-        
+            Boolean validateRequestNumber(string requested_type, string requested_number)
+            {
+                Boolean valid = true;
+                if (requested_type == "s" && requested_number.Length != 8)
+                {
+                    valid = false;
+                }
+                if (requested_type == "r" && requested_number.Length != 7)
+                {
+                    valid = false;
+                }
+                if (!requested_number.All(Char.IsDigit))
+                {
+                    valid = false;
+                }
+                return valid;
+            }
+        }
     }
 }
