@@ -49,12 +49,16 @@ namespace TSDR2JSON
 
             List<string> extra;
 
-            // TEMP
+            // API Key stuff
             string APIKeyFromCommand = null;
             string APIKeyFromConfig = null;
-
             var useConfigFile = false;
             string configurationFilename = null;
+
+            // output file
+            var useOutputFile = false;
+            string outputFilenameFromCommand = null;
+            string outputFilename = null;
 
             var options = new Mono.Options.OptionSet {
 
@@ -106,6 +110,12 @@ namespace TSDR2JSON
                  { "c|config:", "Configuration file name", c => {
                      configurationFilename = c;
                      useConfigFile = true;
+                     }
+                 },
+                
+                 { "o|outfile:", "Output file name", c => {
+                     outputFilenameFromCommand = c;
+                     useOutputFile = true;
                      }
                  },
 
@@ -182,6 +192,15 @@ namespace TSDR2JSON
                     if (configDict.ContainsKey("TSDRAPIKey")) { APIKeyFromConfig = configDict["TSDRAPIKey"]; }
                 }
 
+                if (useOutputFile)
+                {
+                    outputFilename = outputFilenameFromCommand ?? $"{programName.ToLower()}-out.json";
+                    Console.WriteLine($"fileToUse: {outputFilename}");
+                    Console.WriteLine($"fileToUse is null: {outputFilename == null}");
+                    Console.WriteLine($"fileToUse is blank: {outputFilename == ""}");
+                }
+
+
                 Plumage.TSDRReq t = new Plumage.TSDRReq();
 
                 string APIKey = APIKeyFromCommand ??  APIKeyFromConfig; // use --key if specified, else from config file (or null)
@@ -224,7 +243,17 @@ namespace TSDR2JSON
             };
 
                 string json = JsonConvert.SerializeObject(output_dict, Formatting.Indented);
-                Console.WriteLine(json);
+                if (useOutputFile)
+                {
+                    using (StreamWriter sw = new StreamWriter(outputFilename))
+                    {
+                        sw.Write(json);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(json);
+                }
             }
 
             Console.WriteLine("finishing");
