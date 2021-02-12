@@ -40,6 +40,9 @@ namespace TSDR2JSON
             string lookupNumber = null;
 
             var bailOutEarly = false;
+            var shouldShowHelp = false;
+
+            string programName = "TSDR2JSON";
 
             List<string> extra; 
 
@@ -93,12 +96,18 @@ namespace TSDR2JSON
 
                  { "k|key=", "USPTO-provided API key", k => APIKEY = k},
 
+                 { "h|help", "show this message and exit", h => shouldShowHelp = h != null },
+
             };
 
             try
             {
                 // parse the command line
                 extra = options.Parse(args);
+                if (!registrationNumberSet && !serialNumberSet)
+                {
+                    bailOutEarly = true;
+                }
             }
             catch (Mono.Options.OptionException e)
             {
@@ -114,8 +123,14 @@ namespace TSDR2JSON
 
             Console.WriteLine($"type : {lookupType}, number:  {lookupNumber}");
 
+            if (shouldShowHelp)
+            {
+                ShowHelp(options);
+            }
+
             if (!bailOutEarly)
             {
+
                 Console.WriteLine("Here's where I do stuff, if there is stuff to be done.");
                 // temporary, to confirm using new library version
                 var metainfo = Plumage.TSDRReq.GetMetainfo();
@@ -168,8 +183,15 @@ namespace TSDR2JSON
             Console.ReadLine();
             return;
 
-           
-            
+            void ShowHelp(Mono.Options.OptionSet p)
+            {
+                Console.WriteLine($"Usage: {programName} options");
+                Console.WriteLine("Produce a JSON representation of TSDR data");
+                Console.WriteLine();
+                Console.WriteLine("Options:");
+                p.WriteOptionDescriptions(Console.Out);
+            }
+
         }
 
         static Boolean validateRequestNumber(string requested_type, string requested_number)
@@ -189,5 +211,6 @@ namespace TSDR2JSON
             return valid;
         }
 
+        
     }
 }
