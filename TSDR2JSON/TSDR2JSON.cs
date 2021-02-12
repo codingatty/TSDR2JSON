@@ -33,14 +33,78 @@ namespace TSDR2JSON
     {
         static void Main(string[] args)
         {
+            
+            // old vars
             Boolean parms_valid;
             string requested_type;
             string requested_number;
             string arguments_passed = "";
             string exception_msg;
 
+            // new vars
+
+            Boolean registrationNumberSet = false;
+            Boolean serialNumberSet = false;
+            string lookupType = null;
+            string lookupNumber = null;
+
+            List<string> extra; 
+
             // TEMP
             string APIKEY = ""; // placeholder for API Key
+
+            var options = new Mono.Options.OptionSet {
+
+                 { "r|registration=", "trademark registration number to report", r =>  {
+                     if (registrationNumberSet)
+                     {
+                         throw new Mono.Options.OptionException("Specify only one registration number", "-r/--registration");
+                     }
+                     if (serialNumberSet)
+                     {
+                         throw new Mono.Options.OptionException("Specify registration or serial no., but not both", "-r/--registration");
+                     }
+                     registrationNumberSet = true;
+                     lookupType = "r";
+                     lookupNumber  = r;
+                     }
+                },
+                 { "s|serial=", "trademark application serial number to report",  s => {
+                     if (serialNumberSet)
+                     {
+                         throw new Mono.Options.OptionException("Specify only one serial number", "-s/--serial");
+                     }
+                     if (registrationNumberSet)
+                     {
+                         throw new Mono.Options.OptionException("Specify registration or serial no., but not both", "-s/--serial");
+                     }
+                     serialNumberSet = true;
+                     lookupType = "s";
+                     lookupNumber = s;
+                     }
+                 },
+            };
+
+            try
+            {
+                // parse the command line
+                extra = options.Parse(args);
+            }
+            catch (Mono.Options.OptionException e)
+            {
+                // output some error message
+                Console.Write($"Options error ({e.OptionName}): ");
+                Console.WriteLine(e.Message);
+                // SuggestHelp();
+                return;
+            }
+
+
+            Console.WriteLine($"type : {lookupType}, number:  {lookupNumber}");
+            Console.WriteLine("finishing");
+            Console.ReadLine();
+            return;
+
 
             for (int i = 0; i < args.Length; i++)
             {
