@@ -41,7 +41,7 @@ namespace TSDR2JSON
 
             var bailOutEarly = false;
 
-            List<string> extra;  // 
+            List<string> extra; 
 
             // TEMP
             string APIKEY = ""; // placeholder for API Key
@@ -81,7 +81,7 @@ namespace TSDR2JSON
                      serialNumberSet = true;
                      lookupType = "s";
                      lookupNumber = s;
-                     
+
                      var lookupNumberisvalid = validateRequestNumber(lookupType, lookupNumber);
                      if (!lookupNumberisvalid)
                      {
@@ -90,6 +90,9 @@ namespace TSDR2JSON
 
                      }
                  },
+
+                 { "k|key=", "USPTO-provided API key", k => APIKEY = k},
+
             };
 
             try
@@ -126,11 +129,11 @@ namespace TSDR2JSON
 
                 t.getTSDRInfo(lookupNumber, lookupType);
                 var validity_dict = new Dictionary<string, string>()
-            {
-                { "Success", t.TSDRData.TSDRMapIsValid.ToString() },
-                { "ErrorCode", t.ErrorCode },
-                { "ErrorMessage", t.ErrorMessage }
-            };
+                {
+                    { "Success", t.TSDRData.TSDRMapIsValid.ToString() },
+                    { "ErrorCode", t.ErrorCode },
+                    { "ErrorMessage", t.ErrorMessage }
+                };
 
                 var output_TSDRSingle = new Dictionary<string, string>();
                 var output_TSDRMulti = new Dictionary<string, List<Dictionary<string, string>>>();
@@ -159,8 +162,6 @@ namespace TSDR2JSON
 
                 string json = JsonConvert.SerializeObject(output_dict, Formatting.Indented);
                 Console.WriteLine(json);
-
-
             }
 
             Console.WriteLine("finishing");
