@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,11 @@ namespace TSDR2JSON
             List<string> extra;
 
             // TEMP
-            string APIKEY = ""; // placeholder for API Key
+            string APIKeyFromCommand = null;
+            string APIKeyFromConfig = null;
+
+            var useConfigFile = false;
+            string configurationFilename = null;
 
             var options = new Mono.Options.OptionSet {
 
@@ -74,7 +79,7 @@ namespace TSDR2JSON
 
                      }
                 },
-                 { "s|serial=", "trademark application serial number to report",  s => {
+                { "s|serial=", "trademark application serial number to report",  s => {
                      if (serialNumberSet)
                      {
                          throw new Mono.Options.OptionException("Specify only one serial number", "-s/--serial");
@@ -96,7 +101,13 @@ namespace TSDR2JSON
                      }
                  },
 
-                 { "k|key=", "USPTO-provided API key", k => APIKEY = k},
+                 { "k|key=", "USPTO-provided API key", k => APIKeyFromCommand = k},
+
+                 { "c|config:", "Configuration file name", c => {
+                     configurationFilename = c;
+                     useConfigFile = true;
+                     }
+                 },
 
                  { "h|help", "show this message and exit", h => shouldShowHelp = h != null },
 
@@ -133,6 +144,13 @@ namespace TSDR2JSON
                 return;
             }
 
+            Console.WriteLine($"(outer)config file: {configurationFilename}");
+
+            Console.WriteLine($"configurationFilename is null: {configurationFilename == null}");
+            Console.WriteLine($"configurationFilename is blank: {configurationFilename == ""}");
+            Console.WriteLine($"useConfigFile:  {useConfigFile}");
+
+
             if (!registrationNumberSet && !serialNumberSet)
             {
                 Console.WriteLine("No PTO registration or application serial no. provided.");
@@ -140,20 +158,37 @@ namespace TSDR2JSON
                 return;
             }
 
-
             if (!bailOutEarly)
             {
 
+
                 Console.WriteLine("Here's where I do stuff, if there is stuff to be done.");
                 // temporary, to confirm using new library version
+                Console.WriteLine($"config file: {configurationFilename}");
+
                 var metainfo = Plumage.TSDRReq.GetMetainfo();
                 Console.WriteLine(metainfo["MetaInfoLibraryVersion"]);
                 System.Diagnostics.Debug.Assert(metainfo["MetaInfoLibraryVersion"] == "1.4.0");
                 //
 
+                if (useConfigFile)
+                {
+                    string fileToUse = configurationFilename ?? $"{programName.ToLower()}-config.json";
+                    Console.WriteLine($"fileToUse: {fileToUse}");
+                    Console.WriteLine($"fileToUse is null: {fileToUse == null}");
+                    Console.WriteLine($"fileToUse is blank: {fileToUse == ""}");
+                    string JSONConfigInfo = File.ReadAllText(fileToUse);
+                    Dictionary<string, string> configDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(JSONConfigInfo);
+                    if (configDict.ContainsKey("TSDRAPIKey")) { APIKeyFromConfig = configDict["TSDRAPIKey"]; }
+                }
 
                 Plumage.TSDRReq t = new Plumage.TSDRReq();
-                t.setAPIKey(APIKEY);
+
+                string APIKey = APIKeyFromCommand ??  APIKeyFromConfig; // use --key if specified, else from config file (or null)
+                if (APIKey != null)
+                {
+                    t.setAPIKey(APIKey);
+                }
 
                 t.getTSDRInfo(lookupNumber, lookupType);
                 var validity_dict = new Dictionary<string, string>()
