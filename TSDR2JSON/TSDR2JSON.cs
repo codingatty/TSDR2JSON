@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 /*
-TSDR2JSON: Windows command-line program to obtain trademark information from the USPTO's TSDR system and present it in an easy-to-parse JSON format
+TSDR2JSON V1.1.0: Windows command-line program to obtain trademark information from the USPTO's TSDR system and present it in an easy-to-parse JSON format
 
 Example use:
 
