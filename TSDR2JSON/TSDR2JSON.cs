@@ -213,7 +213,7 @@ namespace TSDR2JSON
                 var output_TSDRSingle = new Dictionary<string, string>();
                 var output_TSDRMulti = new Dictionary<string, List<Dictionary<string, string>>>();
 
-                // trim out the "Diagnostic" stuff & use null strings instead of null-value for non-existent error messages
+                // trim out the "MetaInfo" stuff & use null strings instead of null-value for non-existent error messages
                 if (t.TSDRData.TSDRMapIsValid)
                 {
                     if (validity_dict["ErrorCode"] == null) validity_dict["ErrorCode"] = "";
